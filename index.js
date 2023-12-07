@@ -1,15 +1,17 @@
 import express from "express";
 import db from "./config/Database.js";
 import router from "./routes/index.js";
-// import Users from "./models/UserModel.js";
+import Users from "./models/UserModel.js";
+import Biodata from "./models/ProfileModel.js";
 
 const app = express();
 
 (async () => {
   try {
     await db.authenticate();
-    console.log('Database Connected...');
-    // await Users.sync();
+    // console.log('Database Connected...');
+    await Users.sync();
+    await Biodata.sync();
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }

@@ -1,27 +1,35 @@
-import { Sequelize, useInflection } from "sequelize";
+import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 
 const { DataTypes } = Sequelize;
 
-const Users = db.define('users', {
+const Users = db.define(
+  "users",
+  {
+    user_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     name: {
-        type: DataTypes.STRING,
-        // allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-        type: DataTypes.STRING,
-        // allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
-        // allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     refresh_token: {
-        type: DataTypes.TEXT
-    }
-}, {
-    freezeTableName: true
-
-});
+      type: DataTypes.TEXT,
+    },
+  },
+  {
+    freezeTableName: true,
+  }
+);
 
 export default Users;
