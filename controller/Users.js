@@ -1,24 +1,23 @@
 import Users from "../models/UserModel.js";
 import { genSalt, hash, compare } from "bcrypt";
-import sign from "jsonwebtoken";
-import db from "../config/Database.js";
+import bcrypt from 'bcrypt';
+// import db from "../config/Database.js";
+import  jwt from "jsonwebtoken";
 import respon from "./respon.js";
 import Biodata from "../models/ProfileModel.js";
-// import model from "../models/index.js";
+
 
 export async function getUsers(req, res) {
   try {
     const users = await Users.findAll({
-      // beluum bisa join ke niodata biodatas is not associated to users!
-      // include: {
-      //   model: Biodata,
-      //   required: true,
-      // }
+      // join with biodata table
+      include: Biodata, 
+      required: true, 
     });
-    // res.status(200).json(users);
-    respon(200, users, "Data User", res);
+    res.status(200).json(users);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ error: error.message });
   }
 }
 
@@ -26,8 +25,10 @@ export async function getUsersById(req, res) {
   try {
     const users = await Users.findOne({
       where: {
-        id: req.params.id,
+        user_id: req.params.id,
       },
+      include: Biodata, 
+      required: true, 
     });
     res.status(200).json(users);
   } catch (error) {
@@ -36,7 +37,7 @@ export async function getUsersById(req, res) {
 }
 
 export async function Register(req, res) {
-  const { name, email, password, confPassword, ktp, alamat, phone } = req.body;
+  const { name, email, password, confPassword, role, nip_perpus, ktp, alamat, phone } = req.body;
   if (password !== confPassword)
     return res
       .status(400)
@@ -57,10 +58,12 @@ export async function Register(req, res) {
         name: name,
         email: email,
         password: hashPassword,
+        role:role,
         // password:password
       });
       // res.status(201).json({ msg: "Create User Success" });
       const pofiles = await Biodata.create({
+        nip_perpus: nip_perpus,
         ktp: ktp,
         alamat: alamat,
         phone: phone,
@@ -86,7 +89,7 @@ export async function updateUser(req, res) {
   try {
     await Users.update(req.body, {
       where: {
-        id: req.params.id,
+        user_id: req.params.id,
       },
     });
     res.status(200).json({ msg: "User Updated" });
@@ -112,58 +115,95 @@ export async function deleteUser(req, res) {
   }
 }
 
-export async function Login(req, res) {
+export const Login = async (req, res) => {
   try {
-    const user = await Users.findAll({
+    const user = await user.findAll({
       where: {
-        email: req.body.email,
-      },
+        email: req.body.email
+      }
     });
-    if (user.length === 0) {
-      return res.status(400).json({ msg: "Email not found" });
-    }
-    const match = await compare(req.body.password, user[0].password);
-    if (!match) return res.status(400).json({ msg: "Wrong password" });
-
-    const userId = user[0].id;
+    
+    const match = await bcrypt.compare(req.body.password, user[0].password);
+    if (!match) return res.status(400).json({msg: "Wrong Password"});
+    const userId = user[0].user_id;
     const name = user[0].name;
-    const email = user[0].email;
-
-    const accessToken = sign(
-      { userId, name, email },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "20s",
-      }
-    );
-
-    const refreshToken = sign(
-      { userId, name, email },
-      process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
-
-    await Users.update(
-      { refreshToken: refreshToken },
-      {
-        where: {
-          id: userId,
-        },
-      }
-    );
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+    const email = user [0].email;
+    const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: '20s'
     });
-
-    res.json({ accessToken });
+    const refreshToken = jwt.sign({userId, name, email}, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: '1d'
+    });
+    await Users.update({refresh_token: refreshToken}, {
+      where:{
+        user_id:userId
+      }
+    });
+    res.cookie('refreshToken', refreshToken,{
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
+    });
+    res.json({accessToken});
   } catch (error) {
-    res.status(500).json({ msg: "Internal Server Error" });
+    return res.status(404).json({msg: "Email tidak ditemukan"});
   }
 }
+
+// export async function Login (req, res) {
+//   try {
+//     const user = await Users.findOne({
+//       where: {
+//         email: req.body.email,
+//       },
+//     });
+//     // if (user.length === 0) {
+//     //   return res.status(400).json({ msg: "Email not found" });
+//     // }
+//     const match = await bcrypt.compare(req.body.password, user[0].password);
+//     if (!match) return res.status(400).json({ msg: "Wrong password" });
+
+//     const userId = user[0].id;
+//     const name = user[0].name;
+//     const email = user[0].email;
+
+//     const accessToken = jwt.sign(
+//       { userId, name, email },
+//       process.env.ACCESS_TOKEN_SECRET,
+//       {
+//         expiresIn: "20s",
+//       }
+//     );
+//     console.log("akses token sukses");
+
+//     const refreshToken = jwt.sign(
+//       { userId, name, email },
+//       process.env.REFRESH_TOKEN_SECRET,
+//       {
+//         expiresIn: "1d",
+//       }
+//     );
+    
+//     console.log("Refresh token sukses");
+//     await Users.update(
+//       { refresh_token: refreshToken },
+//       {
+//         where: {
+//           user_id: userId,
+//         },
+//       }
+//     );
+
+//     res.cookie('refreshToken', refreshToken, {
+//       httpOnly: true,
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+    
+//     res.json({ accessToken });
+//   } catch (error) {
+//     return res.status(400).json({ msg: "Email not found" });
+//     // res.status(500).json({ msg: "Internal Server Error" });
+//   }}
 
 export async function Logout(req, res) {
   const refreshToken = req.cookies.refreshToken;
@@ -180,7 +220,7 @@ export async function Logout(req, res) {
     { refresh_token: null },
     {
       where: {
-        id: userId,
+        user_id: userId,
       },
     }
   );
