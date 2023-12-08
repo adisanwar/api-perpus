@@ -1,4 +1,3 @@
-// BiodataModel.js
 import { Sequelize, DataTypes } from "sequelize";
 import db from "../config/Database.js";
 import Users from "./UserModel.js";
@@ -11,8 +10,12 @@ const Biodata = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    nip_perpus: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     ktp: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     alamat: {
@@ -35,7 +38,7 @@ const Biodata = db.define(
     freezeTableName: true,
   }
 );
-
-Biodata.belongsTo(Users, { foreignKey: "user_id" });
+Users.hasOne(Biodata, { foreignKey: 'user_id' });
+Biodata.belongsTo(Users, { foreignKey: 'user_id' });
 
 export default Biodata;
