@@ -5,19 +5,18 @@ GET http://localhost:5000/users/1
 
 ###
 POST http://localhost:5000/users
-Content-Type: application/json
+Content-Type: multipart/form-data
 
 {
     "name": "Adi",
     "email": "adi@adi.com",
     "password": "123456",
     "confPassword": "123456",
-    "role": "anggota",
+    "gambar":"ini gambar",
     "nip_perpus": "38476384",
     "ktp" : "287346387546",
     "alamat" : "jakarta",
     "phone" : "087365472283"
-
 }
 
 ###
@@ -25,8 +24,8 @@ POST http://localhost:5000/login
 Content-Type: application/json
 
 {
-    "email" : "adi23@adi.com",
-    "password" : "123456q"
+    "email" : "adi@adi.com",
+    "password" : "123456"
 }
 
 ###
@@ -51,4 +50,44 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:5000/users/5
+DELETE  http://localhost:5000/users
+
+
+###
+GET http://localhost:5000/buku
+
+###
+POST http://localhost:5000/buku
+Content-Type: application/json
+
+{
+    "judul": "atomic habit",
+    "pengarang": "James Roschild",
+    "penerbit": "Gramedia",
+    "tahun_terbit": "2020",
+    "deskripsi": "deskripsi buku",
+    "gambar": "gambar buku",
+    "kategori": "kategori buku",
+    "perpus_id" : 1
+}
+
+###
+GET http://localhost:5000/perpus
+
+
+# isi ddata perpus dulu sebelum data perpus
+###
+POST http://localhost:5000/perpus
+Content-Type: multipart/form-data
+
+{
+    "nama":"Perpustaakaan Bekasi",
+    "alamat":"Jl. Kebon Jeruk",
+    "kota": "Bekasi",
+    "gambar" : "asset",
+    "kode_pos": "17433",
+    "negara" : "Indigo",
+    "telepon":"081234567890",
+    "jam_operasional": "Senin - Jumat 08.00 - 21.00",
+    "email":"perpus@gmail.com"
+}

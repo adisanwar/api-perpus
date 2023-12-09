@@ -26,6 +26,10 @@ const Biodata = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    gambar: {
+      type: DataTypes.STRING,
+      // allowNull: false,
+    },
     user_id: {
       type: DataTypes.INTEGER,
       references: {

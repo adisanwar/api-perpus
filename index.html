@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Perpustakaan</title>
+</head>
+<body>
+  <h1>Create Perpustakaan</h1>
+  
+  <form id="perpustakaanForm">
+    <label for="nama">Nama Perpustakaan:</label><br>
+    <input type="text" id="nama" name="nama" required><br>
+    
+    <label for="alamat">Alamat:</label><br>
+    <input type="text" id="alamat" name="alamat" required><br>
+    
+    <label for="kota">Kota:</label><br>
+    <input type="text" id="kota" name="kota"><br>
+    
+    <label for="kode_pos">Kode Pos:</label><br>
+    <input type="text" id="kode_pos" name="kode_pos"><br>
+    
+    <label for="negara">Negara:</label><br>
+    <input type="text" id="negara" name="negara"><br>
+    
+    <label for="telepon">Telepon:</label><br>
+    <input type="text" id="telepon" name="telepon"><br>
+    
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+    
+    <label for="gambar">Upload Gambar:</label><br>
+    <input type="file" id="gambar" name="gambar"><br><br>
+    
+    <button type="submit">Buat Perpustakaan</button>
+  </form>
+
+  <script>
+    document.getElementById('perpustakaanForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('http://localhost:5000/perpus', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert('Perpustakaan berhasil dibuat!');
+          console.log('Response:', data);
+        } else {
+          alert('Gagal membuat perpustakaan');
+          console.error('Error:', data);
+        }
+      } catch (error) {
+        console.error('Terjadi kesalahan:', error);
+      }
+    });
+  </script>
+</body>
+</html>

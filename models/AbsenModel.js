@@ -2,6 +2,7 @@ import { Sequelize, DataTypes } from 'sequelize';
 import db from '../config/Database.js';
 import Users from './UserModel.js';
 import Perpustakaan from './PerpusModel.js';
+import Perpus from './PerpusModel.js';
 
 const Absen = db.define('absens', {
   absen_id: {
@@ -38,7 +39,7 @@ const Absen = db.define('absens', {
     allowNull: false,
     references: {
       model: Perpustakaan,
-      key: "perpustakaan_id", // Perhatikan penyesuaian key disini
+      key: "perpus_id",
     }
   },
 }, {
