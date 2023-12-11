@@ -55,7 +55,7 @@ export async function CreatePerpus(req, res) {
       }
 
       console.log(req.body);
-      const { nama, alamat, kota, kode_pos, negara, telepon, jam_operasional } = req.body;
+      const { nama, alamat, kota, kode_pos, negara, telepon, jam_operasional,email } = req.body;
       const gambar = req.file ? req.file.path : '';
 
       // Jika berhasil, buat entri Perpustakaan dengan informasi yang diterima dari req.body
@@ -67,6 +67,7 @@ export async function CreatePerpus(req, res) {
         negara: negara,
         telepon: telepon,
         jam_operasional: jam_operasional,
+        email:email,
         gambar: gambar // Simpan path gambar ke dalam kolom gambar di tabel Perpustakaan
       });
 

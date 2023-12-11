@@ -1,15 +1,20 @@
 GET http://localhost:5000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRpIiwiZW1haWwiOiJhZGlAYWRpLmNvbSIsImlhdCI6MTcwMjMxNDM2NywiZXhwIjoxNzAyMzE0Mzg3fQ.emWCvvkhsl8KxggjcRxFVMCUxAyrqBiLJaM1zBYt6uk
 
 ###
 GET http://localhost:5000/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRpIiwiZW1haWwiOiJhZGlAYWRpLmNvbSIsImlhdCI6MTcwMjMxNDk0OCwiZXhwIjoxNzAyMzE0OTY4fQ.StRwUHxX9csuSYTCUF9IKIFCZQYdenh7QZPVGQ98qDk
+
+###
+GET http://localhost:5000/token
 
 ###
 POST http://localhost:5000/users
-Content-Type: multipart/form-data
+Content-Type: application/json
 
 {
-    "name": "Adi",
-    "email": "adi@adi.com",
+    "nama": "Adi",
+    "email": "adi2@adi.com",
     "password": "123456",
     "confPassword": "123456",
     "gambar":"ini gambar",
@@ -27,6 +32,9 @@ Content-Type: application/json
     "email" : "adi@adi.com",
     "password" : "123456"
 }
+###
+DELETE http://localhost:5000/logout
+
 
 ###
 POST http://localhost:5000/users
@@ -57,17 +65,17 @@ DELETE  http://localhost:5000/users
 GET http://localhost:5000/buku
 
 ###
-POST http://localhost:5000/buku
+POST http://8.219.70.58:5988/buku
 Content-Type: application/json
 
 {
-    "judul": "atomic habit",
+    "judul": "Buku Generasi Milenial",
     "pengarang": "James Roschild",
     "penerbit": "Gramedia",
     "tahun_terbit": "2020",
     "deskripsi": "deskripsi buku",
     "gambar": "gambar buku",
-    "kategori": "kategori buku",
+    "kategori": 2,
     "perpus_id" : 1
 }
 

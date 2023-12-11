@@ -7,6 +7,7 @@ import Biodata from "./models/ProfileModel.js";
 import Absen from "./models/AbsenModel.js";
 import Perpus from "./models/PerpusModel.js";
 import Buku from "./models/BukuModel.js";
+import cookieParser from "cookie-parser";
 // import bodyParser from "body-parser";
 
 dotenv.config();
@@ -25,7 +26,7 @@ const app = express();
     console.error('Unable to connect to the database:', error);
   }
   app.use(express.json())
-  // app.use(bodyParser.urlencoded({extended: true}));
+  app.use(cookieParser());
   app.use(router);
 })();
 
