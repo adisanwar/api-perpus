@@ -2,6 +2,9 @@ import respon from "./respon.js";
 import Perpustakaan from "../models/PerpusModel.js";
 import Buku from "../models/BukuModel.js";
 import multer from "multer";
+import Absen from "../models/AbsenModel.js";
+import Users from "../models/UserModel.js";
+import Biodata from "../models/ProfileModel.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -13,7 +16,6 @@ filename: function (req, file, cb) {
 });
 
 const upload = multer({storage:storage});
-
 
 export async function getPerpus(req, res) {
   try {
@@ -33,9 +35,9 @@ export async function getPerpusById(req, res) {
   try {
     const perpus = await Perpustakaan.findOne({
       where: {
-        buku_id: req.params.id,
+        perpus_id: req.params.id,
       },
-      include: Biodata, 
+      include: Buku, 
       required: true, 
     });
     res.status(200).json(perpus);
@@ -84,7 +86,7 @@ export async function updatePerpus(req, res) {
   try {
     await Perpustakaan.update(req.body, {
       where: {
-        buku_id: req.params.id,
+        perpus_id: req.params.id,
       },
     });
     res.status(200).json({ msg: "Perpustakaan Updated" });
@@ -98,7 +100,7 @@ export async function deletePerpus(req, res) {
     const perpusId = req.params.id;
     const perpus = await Perpustakaan.findByPk(perpusId);
 
-    if (!buku) {
+    if (!perpus) {
       return res.status(404).json({ msg: "Perpustakaan not found" });
     }
 
@@ -109,3 +111,43 @@ export async function deletePerpus(req, res) {
     res.status(500).json({ msg: "Internal Server Error" });
   }
 }
+
+export async function createAbsen(req, res) {
+  try {
+    await Absen.create(req.body, {
+      where: {
+        absen_id: req.params.id,
+      },
+    });
+    res.status(200).json({ msg: "Absen dibuat" });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function getAbsen(req, res) {
+  try {
+    const absen = await Absen.findAll({
+      // join with biodata table
+      include: [
+        {
+          model : Perpustakaan,
+          required : true
+        },
+        {
+          model : Users,
+          required : true
+        },
+        // {
+        //   model : Biodata,
+        //   required : true
+        // },
+      ]
+    });
+    res.status(200).json(absen);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
+
