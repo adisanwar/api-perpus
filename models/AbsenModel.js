@@ -3,6 +3,7 @@ import db from '../config/Database.js';
 import Users from './UserModel.js';
 import Perpustakaan from './PerpusModel.js';
 import Perpus from './PerpusModel.js';
+import Biodata from './ProfileModel.js';
 
 const Absen = db.define('absens', {
   absen_id: {

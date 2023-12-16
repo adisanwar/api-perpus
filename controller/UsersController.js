@@ -170,36 +170,37 @@ export async function deleteUser(req, res) {
 
 export async function Login(req, res) {
   try {
+    const { email, password } = req.body; // Extract email and password from the form data
+
     const user = await Users.findAll({
       where: {
-        email: req.body.email,
+        email: email,
       },
     });
+
     if (user.length === 0) {
       return res.status(400).json({ msg: "Email not found" });
     }
-    const match = await bcrypt.compare(req.body.password, user[0].password);
-    if (!match) return res.status(400).json({ msg: "Wrong password" });
+
+    const match = await bcrypt.compare(password, user[0].password);
+
+    if (!match) {
+      return res.status(400).json({ msg: "Wrong password" });
+    }
 
     const userId = user[0].user_id;
     const name = user[0].name;
-    const email = user[0].email;
     const payload = { userId, name, email };
-
-    // console.log('get data berhasil');
 
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "20s",
     });
 
-    // console.log('access token');
     const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "1d",
     });
-    // console.log("refresh token :" +refreshToken);
+
     try {
-      console.log("User data:", payload); // Check if user data is retrieved correctly
-      console.log("User ID:", userId);
       await Users.update(
         {
           refreshToken: refreshToken,
@@ -214,7 +215,6 @@ export async function Login(req, res) {
       console.log(error);
     }
 
-    // console.log('refresh token');
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,

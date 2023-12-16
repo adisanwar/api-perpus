@@ -28,7 +28,7 @@ const Buku = db.define('buku', {
     type: DataTypes.STRING,
   },
   kategori: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
   },
   perpus_id: {
     type: DataTypes.INTEGER,

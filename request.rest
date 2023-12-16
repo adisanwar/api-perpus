@@ -1,6 +1,5 @@
 GET http://localhost:5000/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRpIiwiZW1haWwiOiJhZGlAYWRpLmNvbSIsImlhdCI6MTcwMjMxNDM2NywiZXhwIjoxNzAyMzE0Mzg3fQ.emWCvvkhsl8KxggjcRxFVMCUxAyrqBiLJaM1zBYt6uk
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJBZGkiLCJlbWFpbCI6ImFkaUBhZGkuY29tIiwiaWF0IjoxNzAyMzk2OTMwLCJleHAiOjE3MDIzOTY5NTB9._Bw1H4KYqTcyNzwi0IN2CGdK7zxkPQKxxv3a7CWgsVg
 ###
 GET http://localhost:5000/users/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRpIiwiZW1haWwiOiJhZGlAYWRpLmNvbSIsImlhdCI6MTcwMjMxNDk0OCwiZXhwIjoxNzAyMzE0OTY4fQ.StRwUHxX9csuSYTCUF9IKIFCZQYdenh7QZPVGQ98qDk
@@ -32,6 +31,7 @@ Content-Type: application/json
     "email" : "adi@adi.com",
     "password" : "123456"
 }
+
 ###
 DELETE http://localhost:5000/logout
 
@@ -65,7 +65,10 @@ DELETE  http://localhost:5000/users
 GET http://localhost:5000/buku
 
 ###
-POST http://8.219.70.58:5988/buku
+DELETE http://localhost:5000/buku/1
+
+###
+POST http://localhost:5000/buku
 Content-Type: application/json
 
 {
@@ -75,13 +78,15 @@ Content-Type: application/json
     "tahun_terbit": "2020",
     "deskripsi": "deskripsi buku",
     "gambar": "gambar buku",
-    "kategori": 2,
+    "kategori": "satu",
     "perpus_id" : 1
 }
 
 ###
 GET http://localhost:5000/perpus
 
+###
+GET http://localhost:5000/perpus/1
 
 # isi ddata perpus dulu sebelum data perpus
 ###
@@ -98,4 +103,44 @@ Content-Type: multipart/form-data
     "telepon":"081234567890",
     "jam_operasional": "Senin - Jumat 08.00 - 21.00",
     "email":"perpus@gmail.com"
+}
+
+###
+PUT http://localhost:5000/perpus/1
+Content-Type: application/json
+
+{
+    "nama":"Perpustaakaan Bekasi Setu",
+    "alamat":"Jl. Kebon Jeruk",
+    "kota": "Bekasi",
+    "gambar" : "asset",
+    "kode_pos": "17433",
+    "negara" : "Indigo",
+    "telepon":"081234567890",
+    "jam_operasional": "Senin - Jumat 08.00 - 21.00",
+    "email":"perpus@gmail.com"
+}
+
+###
+GET http://localhost:5000/absen/
+
+###
+POST  http://localhost:5000/absen
+Content-Type: application/json
+
+{
+    "tanggal_absensi": "2023-12-12",
+    "waktu_masuk": "08:00:00",
+    "waktu_keluar": "17:00:00",
+    "durasi_kehadiran": 9,
+    "user_id": 1,
+    "perpus_id": 1 
+}
+
+###
+POST http://localhost:5000/absen/1
+Content-Type: application/json
+
+{
+    "waktu_masuk": "08:00:00"
 }
