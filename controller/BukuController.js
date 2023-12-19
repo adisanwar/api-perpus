@@ -87,7 +87,7 @@ export async function updateBuku(req, res) {
         buku_id: req.params.id,
       },
     });
-    res.status(200).json({ msg: "Buku Updated" });
+    res.status(200).json({ msg: "Buku Updated", data: Buku});
   } catch (error) {
     console.log(error.message);
   }

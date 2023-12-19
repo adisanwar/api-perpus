@@ -27,14 +27,22 @@ const Absen = db.define('absens', {
     type: DataTypes.INTEGER, 
     allowNull: true,
   },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Users,
-      key: "user_id",
-    }
-  },
+  // user_id: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: false,
+  //   references: {
+  //     model: Users,
+  //     key: "user_id",
+  //   }
+  // },
+  biodata_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Biodata,
+        key: "biodata_id",
+      }
+    },
   perpus_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -50,6 +58,9 @@ const Absen = db.define('absens', {
 
 Users.hasMany(Absen, { foreignKey: 'user_id' });
 Absen.belongsTo(Users, { foreignKey: 'user_id' });
+
+Biodata.hasMany(Absen, { foreignKey: 'biodata.id' });
+Absen.belongsTo(Biodata, { foreignKey: 'biodata_id' });
 
 Perpustakaan.hasMany(Absen, { foreignKey: 'perpus_id' });
 Absen.belongsTo(Perpustakaan, { foreignKey: 'perpus_id' });

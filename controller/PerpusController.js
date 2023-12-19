@@ -5,24 +5,25 @@ import multer from "multer";
 import Absen from "../models/AbsenModel.js";
 import Users from "../models/UserModel.js";
 import Biodata from "../models/ProfileModel.js";
+import { request } from "express";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-      cb(null, './assets/perpus');
-},
-filename: function (req, file, cb) {
-  cb(null, file.originalname);
-}
+    cb(null, './assets/perpus');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
 });
 
-const upload = multer({storage:storage});
+const upload = multer({ storage: storage });
 
 export async function getPerpus(req, res) {
   try {
     const perpus = await Perpustakaan.findAll({
       // join with biodata table
-      include: Buku, 
-      required: true, 
+      include: Buku,
+      required: true,
     });
     res.status(200).json(perpus);
   } catch (error) {
@@ -37,8 +38,8 @@ export async function getPerpusById(req, res) {
       where: {
         perpus_id: req.params.id,
       },
-      include: Buku, 
-      required: true, 
+      include: Buku,
+      required: true,
     });
     res.status(200).json(perpus);
   } catch (error) {
@@ -57,7 +58,7 @@ export async function CreatePerpus(req, res) {
       }
 
       console.log(req.body);
-      const { nama, alamat, kota, kode_pos, negara, telepon, jam_operasional,email } = req.body;
+      const { nama, alamat, kota, kode_pos, negara, telepon, jam_operasional, email } = req.body;
       const gambar = req.file ? req.file.path : '';
 
       // Jika berhasil, buat entri Perpustakaan dengan informasi yang diterima dari req.body
@@ -69,11 +70,11 @@ export async function CreatePerpus(req, res) {
         negara: negara,
         telepon: telepon,
         jam_operasional: jam_operasional,
-        email:email,
+        email: email,
         gambar: gambar // Simpan path gambar ke dalam kolom gambar di tabel Perpustakaan
       });
 
-      res.status(201).json({ msg: 'Create Perpustakaan Success', data:perpus });
+      res.status(201).json({ msg: 'Create Perpustakaan Success', data: perpus });
     });
   } catch (error) {
     console.log(error.message);
@@ -131,12 +132,18 @@ export async function getAbsen(req, res) {
       // join with biodata table
       include: [
         {
-          model : Perpustakaan,
-          required : true
+          model: Perpustakaan,
+          required: true
         },
         {
-          model : Users,
-          required : true
+          model: Users,
+          required: true,
+          include: [
+            {
+            model : Biodata,
+            require : true
+            },
+          ],
         },
         // {
         //   model : Biodata,
