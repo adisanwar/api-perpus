@@ -8,6 +8,7 @@ import Absen from "./models/AbsenModel.js";
 import Perpus from "./models/PerpusModel.js";
 import Buku from "./models/BukuModel.js";
 import cookieParser from "cookie-parser";
+import Pinjam from "./models/PinjamModel.js";
 // import bodyParser from "body-parser";
 
 dotenv.config();
@@ -22,6 +23,7 @@ const app = express();
     await Perpus.sync();
     await Absen.sync();
     await Buku.sync();
+    await Pinjam.sync();
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }

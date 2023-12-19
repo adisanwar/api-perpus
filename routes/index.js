@@ -23,7 +23,7 @@ router.get('/buku', getBuku);
 router.get('/buku/:id', getBukuById);
 router.post('/buku', CreateBuku);
 router.delete('/buku/:id', deleteBuku);
-router.put('/buku/:id', updateBuku);
+router.patch('/buku/:id', updateBuku);
 
 router.get('/perpus', getPerpus);
 router.get('/perpus/:id', getPerpusById);

@@ -31,7 +31,14 @@ Content-Type: application/json
     "email" : "adi@adi.com",
     "password" : "123456"
 }
+###
+PATCH http://localhost:5000/login
+Content-Type: multipart/form-data
 
+{
+    "email" : "adi@adi.com",
+    "password" : "123456"
+}
 ###
 DELETE http://localhost:5000/logout
 
@@ -69,7 +76,7 @@ DELETE http://localhost:5000/buku/1
 
 ###
 POST http://localhost:5000/buku
-Content-Type: application/json
+Content-Type: multipart/form-data
 
 {
     "judul": "Buku Generasi Milenial",
@@ -77,7 +84,7 @@ Content-Type: application/json
     "penerbit": "Gramedia",
     "tahun_terbit": "2020",
     "deskripsi": "deskripsi buku",
-    "gambar": "gambar buku",
+    "gambar": "",
     "kategori": "satu",
     "perpus_id" : 1
 }
@@ -86,7 +93,7 @@ Content-Type: application/json
 GET http://localhost:5000/perpus
 
 ###
-GET http://localhost:5000/perpus/1
+GET http://localhost:5000/perpus/
 
 # isi ddata perpus dulu sebelum data perpus
 ###
@@ -133,7 +140,7 @@ Content-Type: application/json
     "waktu_masuk": "08:00:00",
     "waktu_keluar": "17:00:00",
     "durasi_kehadiran": 9,
-    "user_id": 1,
+    "biodata_id": 1,
     "perpus_id": 1 
 }
 
@@ -144,3 +151,4 @@ Content-Type: application/json
 {
     "waktu_masuk": "08:00:00"
 }
+
