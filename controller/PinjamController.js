@@ -8,42 +8,85 @@ import Biodata from "../models/ProfileModel.js";
 import { request } from "express";
 import Pinjam from "../models/PinjamModel.js";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './assets/perpus');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  }
-});
-
-const upload = multer({ storage: storage });
-
 export async function getPinjam(req, res) {
   try {
     const pinjam = await Pinjam.findAll({
-      // join with biodata table
-      
+      include: [
+        {
+          model: Perpustakaan,
+          required: true
+        },
+        {
+          model: Buku,
+          required: true
+        },
+        {
+          model: Users,
+          required: true,
+        }
+      ]
     });
-    res.status(200).json(perpus);
+
+    const usersWithBiodata = await Promise.all(pinjam.map(async (user) => {
+      const biodata = await Biodata.findAll({
+        where: {
+          user_id: user.user_id // Filter Biodata for each user
+        }
+      });
+
+      return {
+        ...user.toJSON(),
+        biodatas: biodata // Add Biodata to each user object
+      };
+    }));
+
+    res.status(200).json(usersWithBiodata);
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     res.status(500).json({ error: error.message });
   }
 }
 
-export async function getPerpusById(req, res) {
+export async function getPinjamId(req, res) {
+
   try {
-    const perpus = await Perpustakaan.findOne({
+    const pinjam = await Pinjam.findByPk({
+      include: [
+        {
+          model: Perpustakaan,
+          required: true
+        },
+        {
+          model: Buku,
+          required: true
+        },
+        {
+          model: Users,
+          required: true,
+        }
+      ],
       where: {
-        perpus_id: req.params.id,
-      },
-      include: Buku,
-      required: true,
+        pinjam_id : req.params.id
+      }
     });
-    res.status(200).json(perpus);
+
+    const usersWithBiodata = await Promise.all(pinjam.map(async (user) => {
+      const biodata = await Biodata.findAll({
+        where: {
+          user_id: user.user_id // Filter Biodata for each user
+        }
+      });
+
+      return {
+        ...user.toJSON(),
+        biodatas: biodata // Add Biodata to each user object
+      };
+    }));
+
+    res.status(200).json(usersWithBiodata);
   } catch (error) {
-    console.log(error);
+    console.error(error.message);
+    res.status(500).json({ error: error.message });
   }
 }
 

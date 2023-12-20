@@ -51,6 +51,15 @@ const Pinjam = db.define('pinjams', {
 }
 );
 
+Users.hasMany(Pinjam, { foreignKey: 'user_id' });
+Pinjam.belongsTo(Users, { foreignKey: 'user_id' });
+
+Perpustakaan.hasMany(Pinjam, { foreignKey: 'perpus_id' });
+Pinjam.belongsTo(Perpustakaan, { foreignKey: 'perpus_id' });
+
+Buku.hasMany(Pinjam, { foreignKey: 'buku_id' });
+Pinjam.belongsTo(Buku, { foreignKey: 'buku_id' });
+
 // jangan di run
 // Perpustakaan.drop()
 //   .then(() => {

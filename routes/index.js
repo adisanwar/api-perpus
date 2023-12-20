@@ -4,7 +4,7 @@ import { CreateBuku, deleteBuku, getBuku, getBukuById, updateBuku } from "../con
 import { createAbsen, CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } from "../controller/PerpusController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { refreshToken } from "../middleware/refreshToken.js";
-import { getAbsen } from "../controller/AbsenModel.js";
+import { getAbsen } from "../controller/AbsenController.js";
 
 const app = express();
 const router = express.Router();
