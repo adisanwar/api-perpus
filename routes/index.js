@@ -1,9 +1,10 @@
 import express  from "express";
 import { CreateUser, deleteUser, getUsers, getUsersById, Login, Logout, Register, updateUser } from "../controller/UsersController.js";
 import { CreateBuku, deleteBuku, getBuku, getBukuById, updateBuku } from "../controller/BukuController.js";
-import { createAbsen, CreatePerpus, deletePerpus, getAbsen, getPerpus, getPerpusById, updatePerpus } from "../controller/PerpusController.js";
+import { createAbsen, CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } from "../controller/PerpusController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { refreshToken } from "../middleware/refreshToken.js";
+import { getAbsen } from "../controller/AbsenModel.js";
 
 const app = express();
 const router = express.Router();

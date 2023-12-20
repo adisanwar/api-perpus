@@ -6,7 +6,7 @@ import Absen from "../models/AbsenModel.js";
 import Users from "../models/UserModel.js";
 import Biodata from "../models/ProfileModel.js";
 import { request } from "express";
-import { Sequelize, where } from "sequelize";
+import Pinjam from "../models/PinjamModel.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -19,12 +19,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-export async function getPerpus(req, res) {
+export async function getPinjam(req, res) {
   try {
-    const perpus = await Perpustakaan.findAll({
+    const pinjam = await Pinjam.findAll({
       // join with biodata table
-      include: Buku,
-      required: true,
+      
     });
     res.status(200).json(perpus);
   } catch (error) {
@@ -116,9 +115,10 @@ export async function deletePerpus(req, res) {
 
 export async function createAbsen(req, res) {
   try {
-    console.log(req.body);
     await Absen.create(req.body, {
-
+      where: {
+        absen_id: req.params.id,
+      },
     });
     res.status(200).json({ msg: "Absen dibuat" });
   } catch (error) {
@@ -126,8 +126,35 @@ export async function createAbsen(req, res) {
   }
 }
 
-import { Op } from 'sequelize'; // Import Op from sequelize for using operators
-
-
-
+export async function getAbsen(req, res) {
+  try {
+    const absen = await Absen.findAll({
+      // join with biodata table
+      include: [
+        {
+          model: Perpustakaan,
+          required: true
+        },
+        {
+          model: Users,
+          required: true,
+          include: [
+            {
+            model : Biodata,
+            require : true
+            },
+          ],
+        },
+        // {
+        //   model : Biodata,
+        //   required : true
+        // },
+      ]
+    });
+    res.status(200).json(absen);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
 
