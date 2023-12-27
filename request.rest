@@ -152,5 +152,5 @@ Content-Type: application/json
     "waktu_masuk": "08:00:00"
 }
 
-###
-GET http://localhost:5000/biodata
+# ###
+# GET http://localhost:5000/biodata

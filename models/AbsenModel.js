@@ -13,10 +13,12 @@ const Absen = db.define('absens', {
   },
   tanggal_absensi: {
     type: DataTypes.DATEONLY,
+    defaultValue:Sequelize.fn('NOW'),
     allowNull: false,
   },
   waktu_masuk: {
     type: DataTypes.TIME,
+    defaultValue:Sequelize.fn('NOW'),
     allowNull: false,
   },
   waktu_keluar: {
@@ -35,14 +37,6 @@ const Absen = db.define('absens', {
       key: "user_id",
     }
   },
-  // biodata_id: {
-  //     type: DataTypes.INTEGER,
-  //     allowNull: false,
-  //     references: {
-  //       model: Biodata,
-  //       key: "biodata_id",
-  //     }
-  //   },
   perpus_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -58,9 +52,6 @@ const Absen = db.define('absens', {
 
 Users.hasMany(Absen, { foreignKey: 'user_id' });
 Absen.belongsTo(Users, { foreignKey: 'user_id' });
-
-// Biodata.hasMany(Absen, { foreignKey: 'biodata_id' });
-// Absen.belongsTo(Biodata, { foreignKey: 'biodata_id' });
 
 Perpustakaan.hasMany(Absen, { foreignKey: 'perpus_id' });
 Absen.belongsTo(Perpustakaan, { foreignKey: 'perpus_id' });

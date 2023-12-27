@@ -1,10 +1,10 @@
 import express  from "express";
 import { CreateUser, deleteUser, getUsers, getUsersById, Login, Logout, Register, updateUser } from "../controller/UsersController.js";
 import { CreateBuku, deleteBuku, getBuku, getBukuById, updateBuku } from "../controller/BukuController.js";
-import { createAbsen, CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } from "../controller/PerpusController.js";
+import { CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } from "../controller/PerpusController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { refreshToken } from "../middleware/refreshToken.js";
-import { getAbsen } from "../controller/AbsenController.js";
+import { createAbsen, deleteAbsen, getAbsen, getAbsenById } from "../controller/AbsenController.js";
 
 const app = express();
 const router = express.Router();
@@ -17,7 +17,7 @@ router.delete('/logout', Logout);
 router.get('/token', refreshToken);
 
 router.post('/users/add', CreateUser);
-router.put('/users/:id', updateUser);
+router.patch('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
 
 router.get('/buku', getBuku);
@@ -30,12 +30,13 @@ router.get('/perpus', getPerpus);
 router.get('/perpus/:id', getPerpusById);
 router.post('/perpus', CreatePerpus);
 router.delete('/perpus/:id', deletePerpus);
-router.put('/perpus/:id', updatePerpus);
+router.patch('/perpus/:id', updatePerpus);
 
 router.get('/absen', getAbsen);
+router.get('/absen/:id', getAbsenById);
 router.post('/absen', createAbsen);
 // router.post('/absen', createAbsen);
-// router.delete('/absen/:id', deletePerpus);
+router.delete('/absen/:id', deleteAbsen);
 // router.put('/absen/:id', updatePerpus);
 
 
