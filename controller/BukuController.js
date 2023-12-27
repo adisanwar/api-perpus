@@ -1,7 +1,8 @@
 import multer from "multer";
 import Buku from "../models/BukuModel.js";
 import Perpustakaan from "../models/PerpusModel.js";
-import Absen from "../models/AbsenModel.js";
+// import Absen from "../models/AbsenModel.js";
+import fs from 'fs/promises';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -35,7 +36,7 @@ export async function getBukuById(req, res) {
       where: {
         buku_id: req.params.id,
       },
-      include: Biodata, 
+      include: Perpustakaan, 
       required: true, 
     });
     res.status(200).json(buku);
@@ -80,18 +81,67 @@ export async function CreateBuku(req, res) {
 }
 
 
+
 export async function updateBuku(req, res) {
   try {
-    await Buku.update(req.body, {
-      where: {
-        buku_id: req.params.id,
-      },
+    const bukuId = req.params.id;
+
+    // Ambil informasi buku yang akan diperbarui untuk mendapatkan path gambar lama
+    const bukuToUpdate = await Buku.findByPk(bukuId);
+    if (!bukuToUpdate) {
+      return res.status(404).json({ msg: 'Buku tidak ditemukan' });
+    }
+
+    // Simpan path gambar lama sebelum proses pembaruan
+    const oldImagePath = bukuToUpdate.gambar;
+
+    // Lakukan proses unggah gambar baru dengan multer
+    upload.single('gambar')(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(500).json({ msg: 'Terjadi kesalahan saat mengunggah gambar' });
+      } else if (err) {
+        return res.status(500).json({ msg: 'Terjadi kesalahan lain saat mengunggah gambar' });
+      }
+
+      console.log(req.body);
+      const { judul, pengarang, penerbit, tahun_terbit, deskripsi, kategori, perpus_id } = req.body;
+      const gambar = req.file ? req.file.path : bukuToUpdate.gambar; // Gunakan gambar lama jika tidak ada gambar baru
+
+      // Perbarui informasi buku dengan gambar yang baru
+      const updatedBuku = await Buku.update(
+        {
+          judul: judul,
+          pengarang: pengarang,
+          penerbit: penerbit,
+          tahun_terbit: tahun_terbit,
+          deskripsi: deskripsi,
+          kategori: kategori,
+          perpus_id: perpus_id,
+          gambar: gambar
+        },
+        {
+          where: { buku_id: bukuId }
+        }
+      );
+
+      if (updatedBuku[0] === 1) {
+        // Hapus gambar lama jika ada
+        if (req.file && oldImagePath) {
+          await fs.unlink(oldImagePath);
+        }
+
+        const updatedData = await Buku.findByPk(bukuId);
+        return res.status(200).json({ msg: 'Update Buku Success', data: updatedData });
+      } else {
+        return res.status(404).json({ msg: 'Buku tidak ditemukan atau tidak dapat diperbarui' });
+      }
     });
-    res.status(200).json({ msg: "Buku Updated", data: Buku});
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ msg: 'Terjadi kesalahan saat memperbarui buku' });
   }
 }
+
 
 export async function deleteBuku(req, res) {
   try {
@@ -100,7 +150,7 @@ export async function deleteBuku(req, res) {
     const buku = await Buku.findByPk(bukuId);
 
     if (!buku) {
-      return res.status(404).json({ msg: "User not found" });
+      return res.status(404).json({ msg: "Id Buku Tidak ditemukan" });
     }
 
     await Buku.destroy({

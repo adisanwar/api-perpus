@@ -1,6 +1,7 @@
 import Users from "../models/UserModel.js";
 import { genSalt, hash, compare } from "bcrypt";
 import bcrypt from "bcrypt";
+import fs from 'fs/promises';
 // import db from "../config/Database.js";
 import jwt from "jsonwebtoken";
 import respon from "./respon.js";
@@ -138,18 +139,67 @@ export async function CreateUser(req, res) {
   }
 }
 
+
+
 export async function updateUser(req, res) {
   try {
-    await Users.update(req.body, {
-      where: {
-        user_id: req.params.id,
-      },
+    const userId = req.params.id; // Ambil ID pengguna dari URL atau request params
+
+    // Ambil informasi profil pengguna yang akan diperbarui untuk mendapatkan path gambar lama
+    const userProfile = await Biodata.findOne({ where: { user_id: userId } });
+    if (!userProfile) {
+      return res.status(404).json({ msg: 'Profil pengguna tidak ditemukan' });
+    }
+
+    // Simpan path gambar lama sebelum proses pembaruan
+    const oldImagePath = userProfile.gambar;
+
+    // Lakukan proses unggah gambar baru dengan multer
+    singleUpload(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(500).json({ msg: 'Terjadi kesalahan saat mengunggah gambar' });
+      } else if (err) {
+        return res.status(500).json({ msg: 'Terjadi kesalahan lain saat mengunggah gambar' });
+      }
+
+      console.log(req.body);
+      console.log(req.file);
+
+      const { nama, email, nip_perpus, ktp, alamat, phone } = req.body;
+      const gambar = req.file ? req.file.path : userProfile.gambar; // Gunakan gambar lama jika tidak ada gambar baru
+
+      // Perbarui informasi profil pengguna dengan gambar yang baru
+      const updatedProfile = await Biodata.update(
+        {
+          gambar: gambar,
+          nip_perpus: nip_perpus,
+          ktp: ktp,
+          alamat: alamat,
+          phone: phone,
+        },
+        {
+          where: { user_id: userId }
+        }
+      );
+
+      if (updatedProfile[0] === 1) {
+        // Hapus gambar lama jika ada dan gambar baru diunggah
+        if (req.file && oldImagePath) {
+          await fs.unlink(oldImagePath);
+        }
+
+        const updatedData = await Biodata.findOne({ where: { user_id: userId } });
+        return res.status(200).json({ msg: 'Update Profil Pengguna Success', data: updatedData });
+      } else {
+        return res.status(404).json({ msg: 'Profil pengguna tidak ditemukan atau tidak dapat diperbarui' });
+      }
     });
-    res.status(200).json({ msg: "User Updated" });
   } catch (error) {
-    console.log(error.message);
+    console.error("Error:", error);
+    res.status(500).json({ error: "Terjadi kesalahan saat memperbarui profil pengguna" });
   }
 }
+
 
 export async function deleteUser(req, res) {
   try {
