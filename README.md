@@ -1,16 +1,13 @@
-# api-perpus
 install nodejs and npm
 
-npm install express mysql2 sequelize bcrypt dotenv cookie-parser cors jsonwebtoken multer path
+npm install express mysql2 sequelize bcrypt dotenv cookie-parser cors jsonwebtoken multer path (if you lazy just type npm install)
 
 npm install -g nodemon
 
-create database perpus
+use patch for update
 
-for linux if bcrypt error uninstall with npm remove bcrypt then install again npm i bcrypt
+create database "perpus" on mysql
 
-#for run
-nodemon index.js
+#for run "nodemon start" on terminal or node index.js
 
-
-*error req body null
+#for testing use postman or rest client extension on vscode
