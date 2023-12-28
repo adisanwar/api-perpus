@@ -90,114 +90,76 @@ export async function getPinjamId(req, res) {
   }
 }
 
-export async function CreatePerpus(req, res) {
+export async function createPinjam(req, res) {
   try {
-    // Lakukan proses unggah gambar dengan multer
-    upload.single('gambar')(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        return res.status(500).json({ msg: 'Terjadi kesalahan saat mengunggah gambar' });
-      } else if (err) {
-        return res.status(500).json({ msg: 'Terjadi kesalahan lain saat mengunggah gambar' });
-      }
-
-      console.log(req.body);
-      const { nama, alamat, kota, kode_pos, negara, telepon, jam_operasional, email } = req.body;
-      const gambar = req.file ? req.file.path : '';
-
-      // Jika berhasil, buat entri Perpustakaan dengan informasi yang diterima dari req.body
-      const perpus = await Perpustakaan.create({
-        nama: nama,
-        alamat: alamat,
-        kota: kota,
-        kode_pos: kode_pos,
-        negara: negara,
-        telepon: telepon,
-        jam_operasional: jam_operasional,
-        email: email,
-        gambar: gambar // Simpan path gambar ke dalam kolom gambar di tabel Perpustakaan
-      });
-
-      res.status(201).json({ msg: 'Create Perpustakaan Success', data: perpus });
-    });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: 'Terjadi kesalahan saat membuat perpustakaan' });
-  }
-}
-
-
-export async function updatePerpus(req, res) {
-  try {
-    await Perpustakaan.update(req.body, {
-      where: {
-        perpus_id: req.params.id,
-      },
-    });
-    res.status(200).json({ msg: "Perpustakaan Updated" });
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-export async function deletePerpus(req, res) {
-  try {
-    const perpusId = req.params.id;
-    const perpus = await Perpustakaan.findByPk(perpusId);
-
-    if (!perpus) {
-      return res.status(404).json({ msg: "Perpustakaan not found" });
+    const {
+      tanggal_pinjam,
+      tanggal_kembali,
+      keterangan,
+      user_id,
+      perpus_id,
+      buku_id,
+    } = req.body;
+    // Pastikan data yang diperlukan ada dalam req.body sebelum membuat entri baru
+    if (!tanggal_pinjam || !user_id || !perpus_id || !buku_id) {
+      return res.status(400).json({ message: "Data tidak lengkap untuk membuat peminjaman" });
     }
 
-    await Perpustakaan.destroy();
-    res.status(200).json({ msg: "Perpustakaan deleted" });
+    // Buat entri peminjaman baru berdasarkan data yang diterima dari req.body
+    const newPinjam = await Pinjam.create({
+      tanggal_pinjam,
+      tanggal_kembali,
+      keterangan,
+      user_id,
+      perpus_id,
+      buku_id,
+    });
+
+    res.status(201).json({
+      message: "Peminjaman berhasil dibuat",
+      data: newPinjam,
+    });
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error);
+    res.status(500).json({
+      error: "Gagal membuat entri peminjaman baru",
+    });
+  }
+}
+
+export async function updatePinjam(req, res) {
+  try {
+    const updatedRows = await Pinjam.update(req.body, {
+      where: {
+        pinjam_id: req.params.id,
+      },
+    });
+
+    if (updatedRows[0] === 0) {
+      // Jika tidak ada baris yang diperbarui, berikan respons bahwa data tidak ditemukan
+      return res.status(404).json({ msg: "Data not found or no changes made" });
+    }
+
+    res.status(200).json({ msg: "Pinjam Updated"});
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to update Pinjam" });
+  }
+}
+
+export async function deletePinjam(req, res) {
+  try {
+    const pinjamId = req.params.id;
+    const pinjam = await Pinjam.findByPk(pinjamId);
+
+    if (!pinjam) {
+      return res.status(404).json({ msg: "Pinjam not found" });
+    }
+
+    await Pinjam.destroy();
+    res.status(200).json({ msg: "Pinjam deleted" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ msg: "Internal Server Error" });
   }
 }
-
-export async function createAbsen(req, res) {
-  try {
-    await Absen.create(req.body, {
-      where: {
-        absen_id: req.params.id,
-      },
-    });
-    res.status(200).json({ msg: "Absen dibuat" });
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-export async function getAbsen(req, res) {
-  try {
-    const absen = await Absen.findAll({
-      // join with biodata table
-      include: [
-        {
-          model: Perpustakaan,
-          required: true
-        },
-        {
-          model: Users,
-          required: true,
-          include: [
-            {
-            model : Biodata,
-            require : true
-            },
-          ],
-        },
-        // {
-        //   model : Biodata,
-        //   required : true
-        // },
-      ]
-    });
-    res.status(200).json(absen);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: error.message });
-  }
-}
-
