@@ -2,7 +2,7 @@ import Users from "../models/UserModel.js";
 import { genSalt, hash, compare } from "bcrypt";
 import bcrypt from "bcrypt";
 import fs from 'fs/promises';
-// import db from "../config/Database.js";
+import  sequelize  from "sequelize";
 import jwt from "jsonwebtoken";
 import respon from "./respon.js";
 import Biodata from "../models/ProfileModel.js";
@@ -130,76 +130,88 @@ export async function Register(req, res) {
   }
 }
 
-export async function CreateUser(req, res) {
-  try {
-    await Users.create(req.body);
-    res.status(201).json({ msg: "Create User Success" });
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-
-
 export async function updateUser(req, res) {
   try {
-    const userId = req.params.id; // Ambil ID pengguna dari URL atau request params
-
-    // Ambil informasi profil pengguna yang akan diperbarui untuk mendapatkan path gambar lama
-    const userProfile = await Biodata.findOne({ where: { user_id: userId } });
-    if (!userProfile) {
-      return res.status(404).json({ msg: 'Profil pengguna tidak ditemukan' });
-    }
-
-    // Simpan path gambar lama sebelum proses pembaruan
-    const oldImagePath = userProfile.gambar;
-
-    // Lakukan proses unggah gambar baru dengan multer
     singleUpload(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
-        return res.status(500).json({ msg: 'Terjadi kesalahan saat mengunggah gambar' });
+        return res.status(500).json({ msg: "Terjadi kesalahan saat mengunggah gambar" });
       } else if (err) {
-        return res.status(500).json({ msg: 'Terjadi kesalahan lain saat mengunggah gambar' });
+        return res.status(500).json({ msg: "Terjadi kesalahan lain saat mengunggah gambar" });
       }
 
-      console.log(req.body);
-      console.log(req.file);
+      const userId = req.params.id;
 
-      const { nama, email, nip_perpus, ktp, alamat, phone } = req.body;
-      const gambar = req.file ? req.file.path : userProfile.gambar; // Gunakan gambar lama jika tidak ada gambar baru
+      const {
+        nama,
+        email,
+        password,
+        confPassword,
+        role,
+        nip_perpus,
+        ktp,
+        alamat,
+        phone,
+      } = req.body;
+      const gambar = req.file;
 
-      // Perbarui informasi profil pengguna dengan gambar yang baru
-      const updatedProfile = await Biodata.update(
-        {
-          gambar: gambar,
+      // Check if any required fields are empty
+      if (!nama && !email && !password && !confPassword && !role && !nip_perpus && !ktp && !alamat && !phone && !gambar)  {
+        return res.status(400).json({ msg: "Data tidak boleh kosong" });
+      }
+
+      if (password !== confPassword) {
+        return res.status(400).json({ msg: "Password dan Konfirmasi Password tidak sesuai" });
+      }
+
+      // Find the user by ID
+      const user = await Users.findByPk(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      // Update user information
+      user.name = nama || user.name;
+      user.email = email || user.email;
+      user.password = password ? await hash(password, await genSalt(10)) : user.password;
+      user.role = role || user.role;
+
+      await user.save();
+
+      // Find or create biodata associated with the user
+      let biodata = await Biodata.findOne({ where: { user_id: userId } });
+
+      if (!biodata) {
+        biodata = await Biodata.create({
+          gambar: req.file ? req.file.path : "",
           nip_perpus: nip_perpus,
           ktp: ktp,
           alamat: alamat,
           phone: phone,
-        },
-        {
-          where: { user_id: userId }
-        }
-      );
-
-      if (updatedProfile[0] === 1) {
-        // Hapus gambar lama jika ada dan gambar baru diunggah
-        if (req.file && oldImagePath) {
-          await fs.unlink(oldImagePath);
-        }
-
-        const updatedData = await Biodata.findOne({ where: { user_id: userId } });
-        return res.status(200).json({ msg: 'Update Profil Pengguna Success', data: updatedData });
+          user_id: userId,
+        });
       } else {
-        return res.status(404).json({ msg: 'Profil pengguna tidak ditemukan atau tidak dapat diperbarui' });
+        // Delete previous image if it exists
+        if (biodata.gambar && req.file) {
+          fs.unlink(biodata.gambar); // Hapus gambar lama dari sistem file
+        }
+
+        biodata.gambar = req.file ? req.file.path : biodata.gambar;
+        biodata.nip_perpus = nip_perpus || biodata.nip_perpus;
+        biodata.ktp = ktp || biodata.ktp;
+        biodata.alamat = alamat || biodata.alamat;
+        biodata.phone = phone || biodata.phone;
+
+        await biodata.save();
       }
+
+      res.status(200).json({ msg: "Update berhasil", data: { user, biodata } });
     });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Terjadi kesalahan saat memperbarui profil pengguna" });
+    res.status(500).json({ error: "Terjadi kesalahan saat melakukan pembaruan" });
   }
 }
-
 
 export async function deleteUser(req, res) {
   try {
