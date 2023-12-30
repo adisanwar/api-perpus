@@ -5,7 +5,7 @@ import { CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } fr
 import { verifyToken } from "../middleware/verifyToken.js";
 import { refreshToken } from "../middleware/refreshToken.js";
 import { createAbsen, deleteAbsen, getAbsen, getAbsenById } from "../controller/AbsenController.js";
-import { createPinjam, deletePinjam, getPinjam, getPinjamId, updatePinjam } from "../controller/PinjamController.js";
+import { createPinjam, deletePinjam, getPinjam, getPinjamById, updatePinjam } from "../controller/PinjamController.js";
 
 const app = express();
 const router = express.Router();
@@ -38,7 +38,7 @@ router.patch('/perpus/:id', updatePerpus);
 
 // Pinjam
 router.get('/pinjam', getPinjam);
-router.get('/pinjam/:id', getPinjamId);
+router.get('/pinjam/:id', getPinjamById);
 router.post('/pinjam', createPinjam);
 router.delete('/pinjam/:id', deletePinjam);
 router.patch('/pinjam/:id', updatePinjam);

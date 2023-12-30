@@ -47,10 +47,15 @@ export async function getPinjam(req, res) {
   }
 }
 
-export async function getPinjamId(req, res) {
+export async function getPinjamById(req, res) {
+  const  pinjamId  = req.params; // Extract the pinjamId from request parameters
+  console.log(pinjamId); // Debug log to verify the extracted pinjamId
 
   try {
-    const pinjam = await Pinjam.findByPk({
+    const pinjam = await Pinjam.findAll( {
+      where: { 
+        pinjam_id : pinjamId.id
+      },
       include: [
         {
           model: Perpustakaan,
@@ -64,31 +69,35 @@ export async function getPinjamId(req, res) {
           model: Users,
           required: true,
         }
-      ],
+      ]
+    });
+
+    console.log(pinjam);
+    if (!pinjam) {
+      return res.status(404).json({ error: 'Pinjam not found' });
+    }
+
+    const biodata = await Biodata.findAll({
       where: {
-        pinjam_id : req.params.id
+        user_id: pinjam.user_id // Filter Biodata for the user in this Pinjam record
       }
     });
 
-    const usersWithBiodata = await Promise.all(pinjam.map(async (user) => {
-      const biodata = await Biodata.findAll({
-        where: {
-          user_id: user.user_id // Filter Biodata for each user
-        }
-      });
+    const pinjamWithBiodata = {
+      ...pinjam.toJSON(),
+      biodatas: biodata // Add Biodata to the Pinjam object
+    };
 
-      return {
-        ...user.toJSON(),
-        biodatas: biodata // Add Biodata to each user object
-      };
-    }));
-
-    res.status(200).json(usersWithBiodata);
+    res.status(200).json(pinjamWithBiodata);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
   }
 }
+
+
+
+
 
 export async function createPinjam(req, res) {
   try {
