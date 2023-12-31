@@ -4,6 +4,9 @@ import bcrypt from "bcrypt";
 import fs from 'fs/promises';
 import  sequelize  from "sequelize";
 import jwt from "jsonwebtoken";
+import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import respon from "./respon.js";
 import Biodata from "../models/ProfileModel.js";
 import multer from "multer";
@@ -19,6 +22,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 const singleUpload = upload.single("gambar");
+
+
 
 export async function getUsers(req, res) {
   try {
@@ -48,8 +53,6 @@ export async function getUsersById(req, res) {
     console.log(error);
   }
 }
-
-// Define the multer upload middleware outside the route handler
 
 // Route handler
 export async function Register(req, res) {

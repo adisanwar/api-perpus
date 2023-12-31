@@ -2,7 +2,7 @@ import express  from "express";
 import { deleteUser, getUsers, getUsersById, Login, Logout, Register, updateUser } from "../controller/UsersController.js";
 import { CreateBuku, deleteBuku, getBuku, getBukuById, updateBuku } from "../controller/BukuController.js";
 import { CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } from "../controller/PerpusController.js";
-import { verifyToken } from "../middleware/verifyToken.js";
+// import { verifyToken } from "../middleware/verifyToken.js";
 import { refreshToken } from "../middleware/refreshToken.js";
 import { createAbsen, deleteAbsen, getAbsen, getAbsenById } from "../controller/AbsenController.js";
 import { createPinjam, deletePinjam, getPinjam, getPinjamById, updatePinjam } from "../controller/PinjamController.js";
@@ -12,6 +12,7 @@ const router = express.Router();
 
 // users
 router.get('/users', getUsers);
+// router.get('/profile/image/:id', GetProfileImage);
 router.get('/users/:id', getUsersById);
 router.post('/users', Register);
 router.post('/login', Login);
