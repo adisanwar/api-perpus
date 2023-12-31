@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import db from "./config/Database.js";
 import router from "./routes/index.js";
 import dotenv from "dotenv";
@@ -27,6 +28,9 @@ const app = express();
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
+
+  app.use(cors());
+  app.use(express.static("assets"));
   app.use(express.json())
   app.use(cookieParser());
   app.use(router);
