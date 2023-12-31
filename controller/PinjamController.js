@@ -71,6 +71,7 @@ export const getPinjamById = async (req, res) => {
       tanggal_pinjam: pinjam.tanggal_pinjam,
       tanggal_kembali: pinjam.tanggal_kembali,
       keterangan: pinjam.keterangan,
+      isVerif: pinjam.isVerif,
       user: {
         user: user || {},
         biodata: biodata || {},
