@@ -47,56 +47,43 @@ export async function getPinjam(req, res) {
   }
 }
 
-export async function getPinjamById(req, res) {
-  const  pinjamId  = req.params; // Extract the pinjamId from request parameters
-  console.log(pinjamId); // Debug log to verify the extracted pinjamId
-
+export const getPinjamById = async (req, res) => {
   try {
-    const pinjam = await Pinjam.findAll( {
-      where: { 
-        pinjam_id : pinjamId.id
+    const pinjam = await Pinjam.findOne({
+      where: {
+        pinjam_id: req.params.id,
       },
-      include: [
-        {
-          model: Perpustakaan,
-          required: true
-        },
-        {
-          model: Buku,
-          required: true
-        },
-        {
-          model: Users,
-          required: true,
-        }
-      ]
     });
 
-    console.log(pinjam);
     if (!pinjam) {
-      return res.status(404).json({ error: 'Pinjam not found' });
+      return res.status(404).json({ message: 'Data peminjaman tidak ditemukan' });
     }
 
-    const biodata = await Biodata.findAll({
-      where: {
-        user_id: pinjam.user_id // Filter Biodata for the user in this Pinjam record
-      }
-    });
+    // Mencari informasi terkait dari tabel User, Perpus, dan Buku berdasarkan ID yang terdapat di tabel Pinjam
+    const user = await Users.findOne({ where: { user_id: pinjam.user_id } });
+    const perpus = await Perpustakaan.findOne({ where: { perpus_id: pinjam.perpus_id } });
+    const buku = await Buku.findOne({ where: { buku_id: pinjam.buku_id } });
+    const biodata = await Biodata.findOne({ where: { user_id: user.user_id } });
 
-    const pinjamWithBiodata = {
-      ...pinjam.toJSON(),
-      biodatas: biodata // Add Biodata to the Pinjam object
+    const response = {
+      pinjam_id: pinjam.pinjam_id,
+      tanggal_pinjam: pinjam.tanggal_pinjam,
+      tanggal_kembali: pinjam.tanggal_kembali,
+      keterangan: pinjam.keterangan,
+      user: user && {
+        biodata: biodata || {},
+      }, // Menyertakan informasi user atau objek kosong jika tidak ditemukan
+      perpus: perpus || {}, // Menyertakan informasi perpus atau objek kosong jika tidak ditemukan
+      buku: buku || {},
+       // Menyertakan informasi buku atau objek kosong jika tidak ditemukan
     };
 
-    res.status(200).json(pinjamWithBiodata);
+    res.json(response);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: error.message });
+    console.log(error.message);
+    res.status(500).json({ message: 'Terjadi kesalahan saat mencari data peminjaman' });
   }
-}
-
-
-
+};
 
 
 export async function createPinjam(req, res) {
