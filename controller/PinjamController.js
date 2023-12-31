@@ -71,7 +71,8 @@ export const getPinjamById = async (req, res) => {
       tanggal_pinjam: pinjam.tanggal_pinjam,
       tanggal_kembali: pinjam.tanggal_kembali,
       keterangan: pinjam.keterangan,
-      user: user && {
+      user: {
+        user: user || {},
         biodata: biodata || {},
       }, // Menyertakan informasi user atau objek kosong jika tidak ditemukan
       perpus: perpus || {}, // Menyertakan informasi perpus atau objek kosong jika tidak ditemukan
