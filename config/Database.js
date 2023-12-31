@@ -26,5 +26,4 @@ try {
 
 // Use the 'db' variable for further database operations
 
-
 export default db; 
