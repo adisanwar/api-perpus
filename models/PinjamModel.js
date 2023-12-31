@@ -21,6 +21,9 @@ const Pinjam = db.define('pinjams', {
   keterangan: {
     type: DataTypes.STRING,
   },
+  isVerif: {
+    type: DataTypes.TINYINT,
+  },
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

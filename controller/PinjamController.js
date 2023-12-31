@@ -108,6 +108,7 @@ export async function createPinjam(req, res) {
       tanggal_pinjam,
       tanggal_kembali,
       keterangan,
+      isVerif:0,
       user_id,
       perpus_id,
       buku_id,
