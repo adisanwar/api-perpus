@@ -1,11 +1,10 @@
 import { Sequelize } from "sequelize";
-import mysql2 from "mysql2";
 
 let db;
 
 try {
-  db = new Sequelize("perpus", "perpus", "Admin@)!@", {
-    host: "8.219.70.58",
+  db = new Sequelize("perpus", "root", "", {
+    host: "localhost",
     dialect: "mysql",
   });
  
@@ -21,6 +20,5 @@ try {
   // Handle or log the error accordingly
 }
 
-// Use the 'db' variable for further database operations
 
 export default db;
