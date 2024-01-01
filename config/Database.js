@@ -4,7 +4,7 @@ import { Sequelize } from "sequelize";
 let db;
 
 try {
-  db = new Sequelize('perpus', 'root', 'Adi1@)!@', {
+  db = new Sequelize('perpus', 'perpus', 'Admin@)!@', {
     host: "8.219.70.58",
     dialect: "mysql"
   });
