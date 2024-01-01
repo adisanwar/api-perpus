@@ -1,4 +1,4 @@
-import { where } from "sequelize";
+// import { where } from "sequelize";
 import Absen from "../models/AbsenModel.js";
 import Perpustakaan from "../models/PerpusModel.js";
 import Biodata from "../models/ProfileModel.js";

@@ -19,12 +19,12 @@ const app = express();
   try {
     await db.authenticate();
     // console.log('Database Connected...');
-    await Users.sync();
-    await Biodata.sync();
-    await Perpus.sync();
-    await Absen.sync();
-    await Buku.sync();
-    await Pinjam.sync();
+    // await Users.sync();
+    // await Biodata.sync();
+    // await Perpus.sync();
+    // await Absen.sync();
+    // await Buku.sync();
+    // await Pinjam.sync();
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
