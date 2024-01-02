@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import db from "./config/Database.js";
 import router from "./routes/index.js";
+
 import dotenv from "dotenv";
 import Users from "./models/UserModel.js";
 import Biodata from "./models/ProfileModel.js";

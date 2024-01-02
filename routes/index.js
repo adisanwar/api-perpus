@@ -6,6 +6,7 @@ import { CreatePerpus, deletePerpus, getPerpus, getPerpusById, updatePerpus } fr
 import { refreshToken } from "../middleware/refreshToken.js";
 import { createAbsen, deleteAbsen, getAbsen, getAbsenById } from "../controller/AbsenController.js";
 import { createPinjam, deletePinjam, getPinjam, getPinjamById, updatePinjam } from "../controller/PinjamController.js";
+import { getPinjamByDateRange, pinjamDailyReport, pinjamMonthlyReport, pinjamWeeklyReport, pinjamYearlyReport } from "../controller/ReportController.js";
 
 const app = express();
 const router = express.Router();
@@ -43,15 +44,18 @@ router.get('/pinjam/:id', getPinjamById);
 router.post('/pinjam', createPinjam);
 router.delete('/pinjam/:id', deletePinjam);
 router.patch('/pinjam/:id', updatePinjam);
+// report pinjam
+router.get('/pinjam-daily', pinjamDailyReport);
+router.get('/pinjam-range', getPinjamByDateRange);
+// router.get('/pdf-daily-report', exportDailyReport);
+router.get('/pinjam-weekly', pinjamWeeklyReport);
+router.get('/pinjam-montly', pinjamMonthlyReport);
+router.get('/pinjam-yearly', pinjamYearlyReport);
 
 // Absen
 router.get('/absen', getAbsen);
 router.get('/absen/:id', getAbsenById);
 router.post('/absen', createAbsen);
-// router.post('/absen', createAbsen);
 router.delete('/absen/:id', deleteAbsen);
-// router.put('/absen/:id', updatePerpus);
-
-
 
 export default router;
