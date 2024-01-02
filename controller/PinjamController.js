@@ -156,7 +156,11 @@ export async function deletePinjam(req, res) {
       return res.status(404).json({ msg: "Pinjam not found" });
     }
 
-    await Pinjam.destroy();
+    await Pinjam.destroy({
+      where: {
+        pinjam_id: pinjamId
+      }
+    });
     res.status(200).json({ msg: "Pinjam deleted" });
   } catch (error) {
     console.error(error.message);

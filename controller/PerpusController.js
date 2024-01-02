@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 export async function getPerpus(req, res) {
   try {
     const perpus = await Perpustakaan.findAll({
-      // join with biodata table
+      // // join with biodata table
       include: Buku,
       required: true,
     });
@@ -154,7 +154,11 @@ export async function deletePerpus(req, res) {
       return res.status(404).json({ msg: "Perpustakaan not found" });
     }
 
-    await Perpustakaan.destroy();
+    await Perpustakaan.destroy({
+      where: {
+        perpus_id: perpusId
+      }
+    });
     res.status(200).json({ msg: "Perpustakaan deleted" });
   } catch (error) {
     console.error(error.message);
