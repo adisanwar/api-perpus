@@ -13,12 +13,10 @@ const Absen = db.define('absens', {
   },
   tanggal_absensi: {
     type: DataTypes.DATEONLY,
-    defaultValue:Sequelize.fn('NOW'),
     allowNull: false,
   },
   waktu_masuk: {
     type: DataTypes.TIME,
-    defaultValue:Sequelize.fn('NOW'),
     allowNull: false,
   },
   waktu_keluar: {
